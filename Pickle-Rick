@@ -1,0 +1,63 @@
+-->> Machine: Pickle Rick
+
+-->> IP: 10.49.143.100
+
+
+-->> Commands:
+
+1> nmap -Pn -p-  -O -T4 -A  10.49.143.100
+
+2> gobuster dir -u http://10.49.143.100 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt
+
+
+-->> Steps:
+
+1> searched the web page and found out username commented in its source code
+
+2> searched for robots.txt found out something looks like a password {Wubbalubbadubdub}
+
+3> start nmap to scan the ip & gobuster for directory bruteforce
+
+4> found out login.php - login using the credentials found before
+
+5> there is a panel which executes the commands
+
+6> ran basic linux commands like- ls, whoami etc {found os in nmap scan}
+
+7> found a Sup3rS3cretPickl3Ingred.txt file in which got a first ingredient (mr. meeseek hair)
+
+8> found second ingredient in "/home/rick/second ingredient"       (1 jerry tear)
+
+9> found third ingredient in "/root/3rd.txt     (fleeb juice)
+
+
+-->> Another way:
+
+1> search for python available there then upload a python reverseshell and got shell!
+
+2> do privilage escalation and find flags
+
+
+-->> Credentials:
+
+Username: R1ckRul3s
+
+Password: Wubbalubbadubdub
+
+
+-->> Found out:
+
+> Note to self, remember username!
+
+    Username: R1ckRul3s
+
+> Wubbalubbadubdub
+
+
+-->> Flags:
+
+1> mr. meeseek hair
+
+2> 1 jerry tear
+
+3> fleeb juice
